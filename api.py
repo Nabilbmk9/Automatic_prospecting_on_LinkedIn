@@ -1,17 +1,17 @@
 import datetime
 import os, random, sys, time
-from django.conf import settings
 import win32clipboard
 import zipfile
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
-import requests
 from selenium.webdriver.support.ui import WebDriverWait # type: ignore
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from dotenv import load_dotenv
 from Publication.models import Linkedin_Account, Linkedin_Profile_Info
 
+load_dotenv()
 delay = 30
 aujourdhui = datetime.date.today()
 
@@ -22,11 +22,11 @@ aujourdhui = datetime.date.today()
 def connection_compte(compte):
     #La fenetre ne se ferme pas quand c'est finis + mettre la fenetre en grand
     chrome_options = Options()
-    chrome_options.add_experimental_option("detach", True)
+    chrome_options.add_experimental_option("detach", True) 
     chrome_options.add_argument("--start-maximized")
 
     #Récupère le chemin du driver et le compte sur lequel se connecter
-    browser = webdriver.Chrome(r"C:\Users\boulm\Python_file\DJANGO\Publication_Linkedin\src\Publication\Linkedin_automation\chromedriver101.exe", chrome_options=chrome_options) # type: ignore
+    browser = webdriver.Chrome(os.getenv("CHROMEDRIVER"), chrome_options=chrome_options) # type: ignore
     browser.get("https://www.linkedin.com/uas/login")
     browser.find_element_by_id('username')
 
