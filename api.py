@@ -9,7 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait # type: ignore
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from dotenv import load_dotenv
-from Publication.models import Linkedin_Account, Linkedin_Profile_Info
 
 load_dotenv()
 delay = 30
@@ -19,7 +18,7 @@ aujourdhui = datetime.date.today()
 #API Connection
 
 #Se connecter au compte Linkedin
-def connection_compte(compte):
+def connection_compte(username, password):
     #La fenetre ne se ferme pas quand c'est finis + mettre la fenetre en grand
     chrome_options = Options()
     chrome_options.add_experimental_option("detach", True) 
@@ -28,14 +27,14 @@ def connection_compte(compte):
     #Récupère le chemin du driver et le compte sur lequel se connecter
     browser = webdriver.Chrome(os.getenv("CHROMEDRIVER"), chrome_options=chrome_options) # type: ignore
     browser.get("https://www.linkedin.com/uas/login")
-    browser.find_element_by_id('username')
+    browser.find_element(By.ID, 'username')
 
-    username = compte.linkedin_account
-    password = compte.linkedin_password
-    elementID = browser.find_element_by_id('username')
+    username = username
+    password = password
+    elementID = browser.find_element(By.ID, 'username')
     elementID.send_keys(username)
 
-    elementID = browser.find_element_by_id('password')
+    elementID = browser.find_element(By.ID, 'password')
     elementID.send_keys(password)
     elementID.submit()
 

@@ -1,25 +1,26 @@
 import os, random, sys, time
 
 import win32clipboard
-
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
-import requests
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-from Publication.models import Linkedin_Profile_Info, Linkedin_Account
-from Publication.Linkedin_automation.api import connection_compte
+from api import connection_compte
+from postgre import connect_db
 
+load_dotenv()
 
-compte = Linkedin_Account.objects.get(pk=1)
-compte_save = Linkedin_Account.objects.get(pk=3)
-username = compte.linkedin_account
-password = compte.linkedin_password
+conn = connect_db()
+cur = conn.cursor()
 
-browser = connection_compte(compte)
+username = os.getenv("LINKEDIN_USERNAME")
+password = os.getenv("LINKEDIN_PASSWORD")
+
+browser = connection_compte(username, password)
 
 delay = 30
 page = 25
@@ -64,13 +65,13 @@ while page < 36:
                 soup = BeautifulSoup(browser.page_source)
                 petit_point = soup.find('div', {'class': 'profile-topcard-actions'})
                 ID_petit_point = petit_point.select_one("button[class*=right-actions-overflow-menu-trigger]")['id']
-                browser.find_element_by_id(ID_petit_point).click()
+                browser.find_element(By.ID, ID_petit_point).click()
 
                 #Récupère l'ID du "copy link"
                 copy_link_id = petit_point.select_one("div[data-control-name*=copy_linkedin]")['id']
 
                 WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.CLASS_NAME, 'inverse-link-on-a-light-background')))
-                browser.find_element_by_id(copy_link_id).click()
+                browser.find_element(By.ID, copy_link_id).click()
                 time.sleep(1)
 
                 win32clipboard.OpenClipboard()
@@ -85,15 +86,11 @@ while page < 36:
                 first_name = full_name.split()[0]
                 last_name = ' '.join(full_name.split()[1:])
 
-                last = Linkedin_Profile_Info.objects.last()
-                last_pk = last.pk + 1
-                ajout_bdd = Linkedin_Profile_Info(sales_navigator_link=full_sales_link,
-                                                    first_name=first_name,
-                                                    last_name=last_name,
-                                                    linkedin_link=linkedin_link,
-                                                    id=last_pk,
-                                                    associated_account=compte_save)
-                ajout_bdd.save()
+                ajout_bdd = cur.execute(f"""
+                    INSERT INTO linkedin_leads (first_name, last_name, linkedin_link, sales_navigator_link)
+                    VALUES ('{first_name}', '{last_name}', '{linkedin_link}', '{full_sales_link}')
+                """)
+
                 save += 1
                 print(f"Sauvegarde n: {save}")
                 
