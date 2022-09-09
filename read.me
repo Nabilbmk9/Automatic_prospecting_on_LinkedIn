@@ -5,9 +5,17 @@ Dowload -> https://www.postgresql.org/download/
 
 Create database and add the info in a .env file :
 
+CHROMEDRIVER=assets/chromedriver101.exe
+
 DB_HOST=<localhost>
 DB_NAME=<your database name>
 DB_USER=<your database user>
 DB_PASSWORD=<your database password>
+
+SEARCH_LINK="https://www.linkedin.com/search/results/people/?heroEntityKey=urn%3Ali%3Aautocomplete%3A-523563840&keywords=charg%C3%A9%20de%20recrutement%20python&origin=CLUSTER_EXPANSION&position=1&searchId=925c33bc-b879-4bc7-88d9-36842a9f3597&sid=VkA"
+KEYWORD_USED="chargé de recrutement python"
+AVERAGE_SEARCH_RESULT=6500
+CURRENT_PAGE=1
+MAX_PAGE=100
 
 Then run setup_db.py
