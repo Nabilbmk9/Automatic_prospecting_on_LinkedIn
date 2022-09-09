@@ -142,13 +142,13 @@ def click_ajouter_note(browser):
         note_button2 = note_button.find('span').text.strip()
         if note_button2 == "Ajouter une note":
             id_button_note = note_button['id']
-            browser.find_element_by_id(id_button_note).click()
+            browser.find_element(By.ID, id_button_note).click()
             return
 
 #Ecrire le message
 def ecrire_message(browser, message):
     WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.ID, 'custom-message')))
-    custom_message = browser.find_element_by_id("custom-message")
+    custom_message = browser.find_element(By.ID, "custom-message")
     custom_message.send_keys(message)
     time.sleep(2)
     return
@@ -163,7 +163,7 @@ def envoi_message(browser):
 
         if envoyer_button2 == "Envoyer":
             id_envoyer = envoyer_button['id']
-            browser.find_element_by_id(id_envoyer).click()
+            browser.find_element(By.ID, id_envoyer).click()
             return
 
 #Sauvegarde BDD erreur
@@ -187,7 +187,7 @@ def click_plus(browser):
     zone = soup.find('div', {'class': 'ph5'})
     zone.find_all('div', {'class': 'artdeco-dropdown'}) # type: ignore
     id_a_cliquer = zone.select_one("div[class*=artdeco-dropdown]")['id'] # type: ignore
-    browser.find_element_by_id(id_a_cliquer).click()
+    browser.find_element(By.ID, id_a_cliquer).click()
     time.sleep(1)
     return
 
@@ -204,12 +204,12 @@ def click_connect_on_plus(browser):
             if li_texte.text.strip() == "Se connecter":
                 id_seconnecter = li_textes.find('div')['id']
                 try:
-                    browser.find_element_by_id(id_seconnecter).click() # type: ignore
+                    browser.find_element(By.ID, id_seconnecter).click() # type: ignore
                     WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.CLASS_NAME, 'artdeco-modal__actionbar')))
                     return
                 except:
                     click_plus(browser=browser)
-                    browser.find_element_by_id(id_seconnecter).click() # type: ignore
+                    browser.find_element(By.ID, id_seconnecter).click() # type: ignore
                     WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.CLASS_NAME, 'artdeco-modal__actionbar')))
                     return
                 
@@ -225,7 +225,7 @@ def click_connect_on_actionbar(browser):
         connect_button2 = connect_button.find('span').text.strip()
         if connect_button2 == "Se connecter":
             id_button_connect = connect_button['id']
-            browser.find_element_by_id(id_button_connect).click()
+            browser.find_element(By.ID, id_button_connect).click()
             return
 
 #Clique sur Connect et ajoute une note
@@ -234,7 +234,7 @@ def click_connect_on_page(browser):
     divprofile = source.find('div', {'class': 'ph5'})
     id_a_cliquer = divprofile.select_one("button[class*=artdeco-button]")['id'] # type: ignore
     WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.ID, id_a_cliquer)))
-    connect = browser.find_element_by_id(id_a_cliquer)
+    connect = browser.find_element(By.ID, id_a_cliquer)
     connect.click()
     return
 
@@ -247,7 +247,7 @@ def connaissez_vous(browser):
         if x.text.strip() == "We don't know each other":
             id_a_cliquer = x['id']
     
-    browser.find_element_by_id(id_a_cliquer).click() # type: ignore
+    browser.find_element(By.ID, id_a_cliquer).click() # type: ignore
 
     #cliquer sur le bouton "se connecter"
     soup = BeautifulSoup(browser.page_source, "html.parser")
@@ -256,7 +256,7 @@ def connaissez_vous(browser):
         if x.text.strip() == "Se connecter":
             id_seconnecter = x['id']
 
-    browser.find_element_by_id(id_seconnecter).click() # type: ignore
+    browser.find_element(By.ID, id_seconnecter).click() # type: ignore
     return
 
 ############################################################################################################################
@@ -291,7 +291,7 @@ def scroller_en_bas(browser, nombre_relations):
                     break
                 except:
                     continue
-            browser.find_element_by_id(btn).click() # type: ignore
+            browser.find_element(By.ID, btn).click() # type: ignore
         except:
             pass
         browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
