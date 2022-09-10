@@ -346,4 +346,3 @@ def voir_relations(browser):
     total_li = totaldiv.find_all('div', {'class': 'mn-connection-card__details'}) # type: ignore
 
     return total_li
-
