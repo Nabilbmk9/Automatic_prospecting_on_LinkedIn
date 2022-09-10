@@ -7,9 +7,8 @@ from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
 
 from api import click_ajouter_note, connection_compte, ecrire_message, envoi_message
-from postgre import *
+from postgre import connect_db
 from pprint import pprint
-from api_normal_search_link import *
 
 load_dotenv()
 
@@ -18,37 +17,31 @@ cur = conn.cursor()
 
 today= datetime.now().strftime("%Y-%m-%d")
 
-keyword_used = retrieve_keyword_used()
-link_search_id = retrieve_link_search_id()
-
-messages_sent = retrieve_messages_sent()
 
 
-# Login to linkedin
-username = os.getenv("LINKEDIN_EMAIL")
-password = os.getenv("LINKEDIN_PASSWORD")
-browser = connection_compte(username,password)
 
-# Go to leads search page
-current_page = retrieve_current_page()
+
 search_link = os.getenv("SEARCH_LINK") + f"&page={current_page}"
-browser.get(search_link)
 
-# Retrieve all profiles found in <li> tags
-all_profiles = analyze_and_retrieve_all_profiles_li_tags(browser)
+
+#######################################################################################
+def analyze_and_retrieve_all_profiles_li_tags(browser):
+    soup = BeautifulSoup(browser.page_source, "html.parser")
+    return soup.find_all('li', {'class': 'reusable-search__result-container'})
 
 tour = 0
-for profile in all_profiles:
+for li in all_li:
     if tour ==4:
         break
-    
-    profile_link = retrieve_profile_link(profile)
+    #Récupérer le lien de chaque profil
+    def retrieve_profile_link(li_tag):
+        a = li_tag.find('a', {'class': 'app-aware-link'})
+        return a.get('href').split('?')[0]
 
     #Récupérer le nom du profil
-    full_name = retrieve_full_name(profile)
-    first_name = full_name.split(' ')[0]
-    last_name = full_name.split(' ')[1]
-
+    def retrieve_full_name(li_tag):
+        return li_tag.find('span', {'aria-hidden': 'true'}).text
+        
     #Récupérer le span qui contient le texte "Se connecter"
     action_button = li.find('button', {'class': 'artdeco-button'})
     span_button = action_button.find('span', {'class': 'artdeco-button__text'}).text
