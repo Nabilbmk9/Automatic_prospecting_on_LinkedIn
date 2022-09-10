@@ -50,14 +50,13 @@ for profile in all_profiles:
     last_name = full_name.split(' ')[1]
 
     #Récupérer le span qui contient le texte "Se connecter"
-    action_button = li.find('button', {'class': 'artdeco-button'})
-    span_button = action_button.find('span', {'class': 'artdeco-button__text'}).text
+    button_name = get_button_name(profile)
 
-    if "Se connecter" in span_button:
+    if "Se connecter" in button_name or "Connect" in button_name:
         message = os.getenv("MESSAGE_TO_SEND")
-        message = message.replace("{first_name}", first_name)
-        id_button = action_button['id']
-        browser.find_element(By.ID, id_button).click()
+        personalized_message = replace_first_name(message, first_name)
+
+        click_connect_button(browser, profile)
         click_ajouter_note(browser)
         ecrire_message(browser, message)
         envoi_message(browser)

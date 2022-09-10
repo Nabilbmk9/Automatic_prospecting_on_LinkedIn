@@ -41,10 +41,21 @@ for li in all_li:
     #Récupérer le nom du profil
     def retrieve_full_name(li_tag):
         return li_tag.find('span', {'aria-hidden': 'true'}).text
-        
+
     #Récupérer le span qui contient le texte "Se connecter"
-    action_button = li.find('button', {'class': 'artdeco-button'})
-    span_button = action_button.find('span', {'class': 'artdeco-button__text'}).text
+    def get_button_name(li_tag):
+        action_button = li_tag.find('button', {'class': 'artdeco-button'})
+        return action_button.find('span', {'class': 'artdeco-button__text'}).text
+
+    def replace_first_name(message, first_name):
+        return message.replace("{first_name}", first_name)
+
+
+    def click_connect_button(browser, li_tag):
+        action_button = li_tag.find('button', {'class': 'artdeco-button'})
+        id_button = action_button['id']
+        browser.find_element(By.ID, id_button).click()
+
 
     if "Se connecter" in span_button:
         message = os.getenv("MESSAGE_TO_SEND")
