@@ -18,11 +18,8 @@ cur = conn.cursor()
 
 today= datetime.now().strftime("%Y-%m-%d")
 
-keyword_used = retrieve_keyword_used()
-link_search_id = retrieve_link_search_id()
-
-messages_sent = retrieve_messages_sent()
-
+keyword_used = retrieve_keyword_used(cur)
+link_search_id = retrieve_link_search_id(cur)
 
 # Login to linkedin
 username = os.getenv("LINKEDIN_EMAIL")
@@ -30,19 +27,19 @@ password = os.getenv("LINKEDIN_PASSWORD")
 browser = connection_compte(username,password)
 
 # Go to leads search page
-current_page = retrieve_current_page()
+current_page = retrieve_current_page(cur)
 search_link = os.getenv("SEARCH_LINK") + f"&page={current_page}"
 browser.get(search_link)
 
 # Retrieve all profiles found in <li> tags
 all_profiles = analyze_and_retrieve_all_profiles_li_tags(browser)
 
-tour = 0
 for profile in all_profiles:
-    if tour ==4:
-        break
-    
+  
     profile_link = retrieve_profile_link(profile)
+    profile_exists = check_profile_exist_in_db(cur, profile_link)
+    if profile_exists:
+        continue
 
     #Récupérer le nom du profil
     full_name = retrieve_full_name(profile)
@@ -52,36 +49,19 @@ for profile in all_profiles:
     #Récupérer le span qui contient le texte "Se connecter"
     button_name = get_button_name(profile)
 
-    if "Se connecter" in button_name or "Connect" in button_name:
+    if "Se connecter" in button_name:
         message = os.getenv("MESSAGE_TO_SEND")
         personalized_message = replace_first_name(message, first_name)
 
         click_connect_button(browser, profile)
         click_ajouter_note(browser)
-        ecrire_message(browser, message)
+        ecrire_message(browser, personalized_message)
         envoi_message(browser)
 
-    #Vérifier si le profil existe dans la base de données
-    cur.execute("""
-         SELECT * FROM linkedin_leads WHERE linkedin_link = %s
-    """, (profile_link,))
-    profile_exists = cur.fetchone()
+        insert_new_profile_in_db(cur, conn, first_name, last_name, profile_link, True, today, keyword_used, link_search_id)
+        number_of_message_sent = retrieve_messages_sent(cur)+1
+        update_messages_sent_in_db(cur, conn, number_of_message_sent)
 
-    #Si le profil n'existe pas, on l'ajoute à la base de données
-    if not profile_exists:
-        cur.execute("""
-            INSERT INTO linkedin_leads (first_name, last_name, linkedin_link, message_sent, last_message, category, link_search_id) VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (first_name, last_name, profile_link, "true", str(today), keyword_used, int(link_search_id)))
-        conn.commit()
-    
-    # add 1 to messages_sent in database
-    messages_sent += 1
-    cur.execute("""
-        UPDATE lead_search_links_infos SET messages_sent = %s WHERE search_link = %s
-    """, (messages_sent, os.getenv("SEARCH_LINK")))
-    conn.commit()
-       
-    tour += 1
 
 
 cur.close()
