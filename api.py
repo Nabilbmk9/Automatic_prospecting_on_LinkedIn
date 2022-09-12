@@ -212,7 +212,6 @@ def click_connect_on_plus(browser):
                     browser.find_element(By.ID, id_seconnecter).click() # type: ignore
                     WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.CLASS_NAME, 'artdeco-modal__actionbar')))
                     return
-                
         except:
             continue
 

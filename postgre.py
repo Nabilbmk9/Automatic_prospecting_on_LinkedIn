@@ -38,7 +38,6 @@ def retrieve_messages_sent(cursor):
     """, (os.getenv("SEARCH_LINK"),))
     return cursor.fetchone()[0]
 
-
 def check_profile_exist_in_db(cursor, profile_link):
     cursor.execute("""
         SELECT * FROM linkedin_leads WHERE linkedin_link = %s

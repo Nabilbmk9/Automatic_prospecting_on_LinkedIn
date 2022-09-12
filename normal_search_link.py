@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
 
-from api import click_ajouter_note, connection_compte, ecrire_message, envoi_message
+from api import click_ajouter_note, click_connect_on_actionbar, click_connect_on_plus, click_plus, connaissez_vous, connection_compte, ecrire_message, envoi_message
 from postgre import *
 from pprint import pprint
 from api_normal_search_link import *
@@ -41,18 +41,17 @@ for profile in all_profiles:
     if profile_exists:
         continue
 
-    #Récupérer le nom du profil
+    # Retrieve profile name
     full_name = retrieve_full_name(profile)
     first_name = full_name.split(' ')[0]
     last_name = full_name.split(' ')[1]
 
-    #Récupérer le span qui contient le texte "Se connecter"
+    # Retrieve action button "Connect" or "Follow"
     button_name = get_button_name(profile)
+    message = os.getenv("MESSAGE_TO_SEND")
+    personalized_message = replace_first_name(message, first_name)
 
     if "Se connecter" in button_name:
-        message = os.getenv("MESSAGE_TO_SEND")
-        personalized_message = replace_first_name(message, first_name)
-
         click_connect_button(browser, profile)
         click_ajouter_note(browser)
         ecrire_message(browser, personalized_message)
@@ -62,6 +61,31 @@ for profile in all_profiles:
         number_of_message_sent = retrieve_messages_sent(cur)+1
         update_messages_sent_in_db(cur, conn, number_of_message_sent)
 
+        break
+
+    elif "Suivre" in button_name:
+        browser.get(profile_link)
+        click_plus(browser)
+        click_connect_on_plus(browser)
+        try:
+            connaissez_vous(browser)
+        except:
+            pass
+        try:
+            click_connect_on_actionbar(browser)
+            click_ajouter_note(browser)
+        except:
+            click_ajouter_note(browser)
+
+        ecrire_message(browser, personalized_message)
+        envoi_message(browser)
+        insert_new_profile_in_db(cur, conn, first_name, last_name, profile_link, True, today, keyword_used, link_search_id)
+        number_of_message_sent = retrieve_messages_sent(cur)+1
+        update_messages_sent_in_db(cur, conn, number_of_message_sent)
+        search_link = os.getenv("SEARCH_LINK") + f"&page={current_page}"
+        browser.get(search_link)
+
+        break
 
 
 cur.close()
