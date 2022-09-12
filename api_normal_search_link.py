@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
+import time
 
 
 def analyze_and_retrieve_all_profiles_li_tags(browser):
@@ -24,3 +25,4 @@ def click_connect_button(browser, li_tag):
     action_button = li_tag.find('button', {'class': 'artdeco-button'})
     id_button = action_button['id']
     browser.find_element(By.ID, id_button).click()
+    time.sleep(1)

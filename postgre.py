@@ -44,6 +44,12 @@ def check_profile_exist_in_db(cursor, profile_link):
     """, (profile_link,))
     return cursor.fetchone()
 
+def retrieve_nb_messages_sent_by_date(cursor, date):
+    cursor.execute("""
+        SELECT COUNT(*) FROM linkedin_leads WHERE last_message = %s
+    """, (str(date),))
+    return cursor.fetchone()[0]
+
 # Insert data in database functions
 def insert_new_profile_in_db(cursor, connexion, first_name, last_name, profile_link, message_sent_true_or_false, date, keyword_used, link_search_id, error=False):
     cursor.execute("""

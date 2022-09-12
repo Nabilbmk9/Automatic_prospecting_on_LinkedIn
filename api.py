@@ -185,6 +185,7 @@ def click_plus(browser):
     # Récupère l'ID du "plus" pour cliquer dessus
     soup = BeautifulSoup(browser.page_source, "html.parser")
     zone = soup.find('div', {'class': 'ph5'})
+    WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.CLASS_NAME, 'artdeco-dropdown')))
     zone.find_all('div', {'class': 'artdeco-dropdown'}) # type: ignore
     id_a_cliquer = zone.select_one("div[class*=artdeco-dropdown]")['id'] # type: ignore
     browser.find_element(By.ID, id_a_cliquer).click()
