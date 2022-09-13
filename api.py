@@ -241,6 +241,7 @@ def click_connect_on_page(browser):
 #Section "connaissez vous" après avoir cliquer sur "se connecter", dans les petit points
 def connaissez_vous(browser):
     #cliquer sur le boutton "We don't know each other"
+    time.sleep(1)
     soup = BeautifulSoup(browser.page_source, "html.parser")
     action_bar = soup.find('div', {'class': 'artdeco-pill-choice-group'})
     for x in action_bar: # type: ignore

@@ -64,6 +64,15 @@ while messages_sent_today < max_messages_per_day:
 
             if "Se connecter" in button_name:
                 click_connect_button(browser, profile)
+                try:
+                    connaissez_vous(browser)
+                except:
+                    pass
+                try:
+                    click_connect_on_actionbar(browser)
+                    click_ajouter_note(browser)
+                except:
+                    click_ajouter_note(browser)
                 click_ajouter_note(browser)
                 ecrire_message(browser, personalized_message)
                 envoi_message(browser)
@@ -72,7 +81,7 @@ while messages_sent_today < max_messages_per_day:
                 number_of_message_sent = retrieve_messages_sent(cur)+1
                 update_messages_sent_in_db(cur, conn, number_of_message_sent)
 
-            elif "Suivre" in button_name:
+            elif "Suivre" in button_name or "Message" in button_name:
                 browser.get(profile_link)
                 click_plus(browser)
                 click_connect_on_plus(browser)
