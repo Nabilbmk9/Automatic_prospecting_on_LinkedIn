@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS linkedin_leads (
     follow_up_3 BOOLEAN DEFAULT FALSE,
     replied BOOLEAN DEFAULT FALSE,
     last_message DATE,
-    category VARCHAR(50),
+    category TEXT,
     error BOOLEAN DEFAULT FALSE,
     linkedin_sales_navigator_link VARCHAR(300),
     link_search_id INTEGER REFERENCES lead_search_links_infos(id)

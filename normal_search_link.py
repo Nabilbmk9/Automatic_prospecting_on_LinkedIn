@@ -103,6 +103,7 @@ while messages_sent_today < max_messages_per_day:
                 search_link = os.getenv("SEARCH_LINK") + f"&page={current_page}"
                 browser.get(search_link)
         except:
+            print("Error")
             continue
 
         print(f"Message sent today : {int(messages_sent_today)+1}")
