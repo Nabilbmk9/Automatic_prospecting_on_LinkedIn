@@ -5,8 +5,6 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from Publication.Linkedin_automation.api import connection_compte, nbr_relations, sauvegarde_followup1, sauvegarde_followup3, scroller_en_bas
-from Publication.models import Linkedin_Account, Linkedin_Profile_Info
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
